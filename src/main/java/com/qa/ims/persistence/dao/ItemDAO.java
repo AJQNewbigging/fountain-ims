@@ -10,8 +10,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.utils.DBUtils;
 
@@ -42,8 +40,24 @@ public class ItemDAO implements Dao<Item> {
 
 	@Override
 	public Item read(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Item item = null;
+		
+		try {
+			Connection con = DBUtils.getInstance().getConnection();
+			PreparedStatement stmt = con.prepareStatement("SELECT * FROM items WHERE id = ?");
+			stmt.setLong(1, id);
+			
+			ResultSet rs = stmt.executeQuery();
+			if (rs.first()) {
+				item = modelFromResultSet(rs);
+			}
+			
+		} catch (SQLException e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		
+		return item;
 	}
 
 	@Override
@@ -87,9 +101,24 @@ public class ItemDAO implements Dao<Item> {
 	}
 
 	@Override
-	public Item update(Item t) {
-		// TODO Auto-generated method stub
-		return null;
+	public Item update(Item item) {
+		
+		try {
+			Connection con = DBUtils.getInstance().getConnection();
+			PreparedStatement stmt = con.prepareStatement(
+					"UPDATE items SET name = ?, price = ? WHERE id = ?");
+			stmt.setString(1, item.getName());
+			stmt.setDouble(2, item.getPrice());
+			stmt.setLong(3, item.getId());
+			stmt.executeUpdate();
+			
+			item = this.read(item.getId());
+		} catch (Exception e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		
+		return item;
 	}
 
 	@Override

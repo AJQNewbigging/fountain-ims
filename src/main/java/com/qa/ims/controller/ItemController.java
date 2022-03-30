@@ -33,13 +33,7 @@ public class ItemController implements CrudController<Item> {
 
 	@Override
 	public Item create() {
-		LOGGER.info("Please enter a name for the item:");
-		String name = util.getString();
-		LOGGER.info("And the price? (£)");
-		Double price = util.getDouble();
-		
-		Item item = itemDAO.create(
-				Item.builder().name(name).price(price).build());
+		Item item = itemDAO.create(createForm(new Item()));
 		
 		LOGGER.info(String.format(
 				"New item '%s' created successfully!", item.getName()));
@@ -48,8 +42,25 @@ public class ItemController implements CrudController<Item> {
 
 	@Override
 	public Item update() {
-		// TODO Auto-generated method stub
-		return null;
+		LOGGER.info("What is the ID of the item you wish to modify?");
+		Item item = createForm(Item.builder().id(util.getLong()).build());
+		
+		item = itemDAO.update(item);
+		LOGGER.info(String.format("The update has been appled to item of id %d",
+				item.getId()));
+		
+		return item;
+	}
+	
+	private Item createForm(Item item) {
+		
+		LOGGER.info("Please enter a name for the item:");
+		item.setName(util.getString());
+		
+		LOGGER.info("And the price? (£)");
+		item.setPrice(util.getDouble());
+		
+		return item;
 	}
 
 	@Override

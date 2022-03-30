@@ -3,6 +3,7 @@ package com.qa.ims.persistence.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 // Establishes default getters and setters for private properties
 @Data
@@ -10,6 +11,8 @@ import lombok.Data;
 @Builder				
 // Establishes all arg constructor
 @AllArgsConstructor
+// Establishes no arg constructor
+@NoArgsConstructor
 public class Item {
 	
 	private Long id;
