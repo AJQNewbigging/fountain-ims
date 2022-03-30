@@ -123,7 +123,18 @@ public class ItemDAO implements Dao<Item> {
 
 	@Override
 	public int delete(long id) {
-		// TODO Auto-generated method stub
+		
+		try {
+			Connection con = DBUtils.getInstance().getConnection();
+			PreparedStatement stmt = con.prepareStatement("DELETE FROM items WHERE id = ?");
+			stmt.setLong(1, id);
+			
+			return stmt.executeUpdate();
+		} catch (Exception e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		
 		return 0;
 	}
 

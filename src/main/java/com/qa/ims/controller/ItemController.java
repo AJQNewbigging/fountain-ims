@@ -65,8 +65,17 @@ public class ItemController implements CrudController<Item> {
 
 	@Override
 	public int delete() {
-		// TODO Auto-generated method stub
-		return 0;
+		LOGGER.info("You cannot undo this action, type 'yes' to continue, or anything else to return.");
+		String confirm = util.getString();
+		if (!confirm.toLowerCase().equals("yes")) {
+			LOGGER.info("Cancelling request...");
+			return 0;
+		}
+		LOGGER.info("What is the ID of the item you would like removed?");
+		Long id = util.getLong();
+		int i = itemDAO.delete(id);
+		LOGGER.info("Item deleted successfully");
+		return i;
 	}
 
 }
