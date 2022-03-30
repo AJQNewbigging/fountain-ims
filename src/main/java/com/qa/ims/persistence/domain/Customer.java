@@ -1,5 +1,12 @@
 package com.qa.ims.persistence.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+@AllArgsConstructor
 public class Customer {
 
 	private Long id;
@@ -10,36 +17,8 @@ public class Customer {
 		this.setFirstName(firstName);
 		this.setSurname(surname);
 	}
-
-	public Customer(Long id, String firstName, String surname) {
-		this.setId(id);
-		this.setFirstName(firstName);
-		this.setSurname(surname);
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
+	
+	// Getters, setters, and all args constructor replaced by lombok annotations
 
 	@Override
 	public String toString() {
