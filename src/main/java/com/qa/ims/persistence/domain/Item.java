@@ -16,9 +16,9 @@ public class Item {
 	
 	private String name;
 	
-	private Float price;
+	private Double price;
 	
-	public Item(String name, Float price) {
+	public Item(String name, Double price) {
 		this.name = name;
 		this.price = price;
 	}
@@ -37,7 +37,7 @@ public class Item {
 	@Override
 	public String toString() {
 		return String.format(
-				"Item [\n\tID:\t\t%l\n\tName:\t%s\n\tPrice:\t£%f\n]\n",
+				"Item [\n\tID:\t%d\n\tName:\t%s\n\tPrice:\t£%.2f\n]\n",
 				this.id, this.name, this.price);
 	}
 	

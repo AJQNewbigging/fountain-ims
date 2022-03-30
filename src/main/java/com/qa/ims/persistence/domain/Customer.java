@@ -23,7 +23,7 @@ public class Customer {
 	@Override
 	public String toString() { // toString replaced for uniformity
 		return String.format(
-				"Item [\n\tID:\t%d\n\tName:\t%s %s\n]\n",
+				"Customer [\n\tID:\t%d\n\tName:\t%s %s\n]\n",
 				this.id, this.firstName, this.surname);
 	}
 
