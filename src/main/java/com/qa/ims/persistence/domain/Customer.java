@@ -21,8 +21,10 @@ public class Customer {
 	// Getters, setters, and all args constructor replaced by lombok annotations
 
 	@Override
-	public String toString() {
-		return "id:" + id + " first name:" + firstName + " surname:" + surname;
+	public String toString() { // toString replaced for uniformity
+		return String.format(
+				"Item [\n\tID:\t%d\n\tName:\t%s %s\n]\n",
+				this.id, this.firstName, this.surname);
 	}
 
 	@Override
