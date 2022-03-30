@@ -27,7 +27,7 @@ public class IMS {
 		this.utils = new Utils();
 		final CustomerDAO custDAO = new CustomerDAO();
 		this.customers = new CustomerController(custDAO, utils);
-		this.items = new ItemController(new ItemDAO());
+		this.items = new ItemController(new ItemDAO(), utils);
 	}
 
 	public void imsSystem() {

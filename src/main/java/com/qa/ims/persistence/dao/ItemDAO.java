@@ -1,6 +1,7 @@
 package com.qa.ims.persistence.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,6 +11,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.utils.DBUtils;
 
@@ -45,9 +47,43 @@ public class ItemDAO implements Dao<Item> {
 	}
 
 	@Override
-	public Item create(Item t) {
-		// TODO Auto-generated method stub
-		return null;
+	public Item create(Item item) {
+		
+		try {
+			Connection con = DBUtils.getInstance().getConnection();
+			PreparedStatement stmt = con.prepareStatement(
+					"INSERT INTO items(name, price) VALUES (?,?);");
+			stmt.setString(1, item.getName());
+			stmt.setDouble(2, item.getPrice());
+			stmt.executeUpdate();
+			
+			item = this.readLatest();
+		} catch (Exception e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		
+		return item;
+	}
+	
+	public Item readLatest() {
+		Item item = null;
+		
+		try { 
+			Connection con = DBUtils.getInstance().getConnection();
+			Statement stmt = con.createStatement();
+			
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM items ORDER BY id DESC LIMIT 1");
+			
+			rs.next();
+			item = modelFromResultSet(rs);
+		} catch (Exception e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		
+		return item;
 	}
 
 	@Override

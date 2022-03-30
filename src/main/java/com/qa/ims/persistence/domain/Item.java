@@ -18,11 +18,6 @@ public class Item {
 	
 	private Double price;
 	
-	public Item(String name, Double price) {
-		this.name = name;
-		this.price = price;
-	}
-	
 	/**
 	 * 
 	 * Should return string like:

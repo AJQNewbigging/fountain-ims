@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.qa.ims.persistence.dao.Dao;
 import com.qa.ims.persistence.domain.Item;
+import com.qa.ims.utils.Utils;
 
 import lombok.AllArgsConstructor;
 
@@ -16,6 +17,8 @@ public class ItemController implements CrudController<Item> {
 	public static final Logger LOGGER = LogManager.getLogger();
 	
 	private Dao<Item> itemDAO;
+	
+	private Utils util;
 
 	@Override
 	public List<Item> readAll() {
@@ -30,8 +33,17 @@ public class ItemController implements CrudController<Item> {
 
 	@Override
 	public Item create() {
-		// TODO Auto-generated method stub
-		return null;
+		LOGGER.info("Please enter a name for the item:");
+		String name = util.getString();
+		LOGGER.info("And the price? (£)");
+		Double price = util.getDouble();
+		
+		Item item = itemDAO.create(
+				Item.builder().name(name).price(price).build());
+		
+		LOGGER.info(String.format(
+				"New item '%s' created successfully!", item.getName()));
+		return item;
 	}
 
 	@Override
