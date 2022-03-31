@@ -66,8 +66,43 @@ public class OrderDAO implements Dao<Order> {
 
 	@Override
 	public Order read(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Order order = null;
+		
+		try {
+			Connection con = DBUtils.getInstance().getConnection();
+			PreparedStatement stmt = con.prepareStatement(
+					"SELECT o.id AS order_id, "
+					+ "c.id AS customer_id, c.first_name, c.surname, "
+					+ "i.id AS item_id, i.name, i.price, ot.quantity "
+					+ "FROM orders o "
+					+ "JOIN customers c ON o.customer_id = c.id "
+					+ "JOIN order_items ot ON o.id = ot.order_id "
+					+ "JOIN items i ON ot.item_id = i.id "
+					+ "WHERE order_id = ?");
+			stmt.setLong(1, id);
+			
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				if (order == null) {
+					order = modelFromResultSet(rs);
+				}
+				
+				Item item = Item.builder()
+						.id(rs.getLong("item_id"))
+						.name(rs.getString("name"))
+						.price(rs.getDouble("price"))
+						.build();
+				
+				order.addItem(item, rs.getInt("quantity"));
+			}
+			
+		} catch (SQLException e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		
+		return order;
 	}
 
 	@Override
@@ -84,7 +119,7 @@ public class OrderDAO implements Dao<Order> {
 			order.setId(newId);
 			
 			if (!order.getItems().isEmpty()) {
-				order = saveItemsToOrder(order);
+				order = update(order);
 			}
 		} catch (Exception e) {
 			LOGGER.debug(e);
@@ -113,8 +148,9 @@ public class OrderDAO implements Dao<Order> {
 		
 		return orderId;
 	}
-	
-	public Order saveItemsToOrder(Order order) {
+
+	@Override
+	public Order update(Order order) {
 		try {
 			Connection con = DBUtils.getInstance().getConnection();
 			PreparedStatement stmt = con.prepareStatement(
@@ -139,20 +175,16 @@ public class OrderDAO implements Dao<Order> {
 	}
 
 	@Override
-	public Order update(Order t) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public int delete(long id) {
 
 		try {
 			Connection con = DBUtils.getInstance().getConnection();
-			PreparedStatement otDelete = con.prepareStatement("DELETE FROM order_items WHERE order_id = ?");
+			PreparedStatement otDelete = con.prepareStatement(
+					"DELETE FROM order_items WHERE order_id = ?");
 			otDelete.setLong(1, id);
 			
-			PreparedStatement oDelete = con.prepareStatement("DELETE FROM orders WHERE id = ?");
+			PreparedStatement oDelete = con.prepareStatement(
+					"DELETE FROM orders WHERE id = ?");
 			oDelete.setLong(1, id);
 			
 			return otDelete.executeUpdate() + oDelete.executeUpdate();

@@ -44,7 +44,8 @@ public class ItemDAO implements Dao<Item> {
 		
 		try {
 			Connection con = DBUtils.getInstance().getConnection();
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM items WHERE id = ?");
+			PreparedStatement stmt = con.prepareStatement(
+					"SELECT * FROM items WHERE id = ?");
 			stmt.setLong(1, id);
 			
 			ResultSet rs = stmt.executeQuery();
@@ -126,7 +127,8 @@ public class ItemDAO implements Dao<Item> {
 		
 		try {
 			Connection con = DBUtils.getInstance().getConnection();
-			PreparedStatement stmt = con.prepareStatement("DELETE FROM items WHERE id = ?");
+			PreparedStatement stmt = con.prepareStatement(
+					"DELETE FROM items WHERE id = ?");
 			stmt.setLong(1, id);
 			
 			return stmt.executeUpdate();

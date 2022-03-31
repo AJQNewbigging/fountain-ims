@@ -3,6 +3,7 @@ package com.qa.ims.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,8 @@ public class OrderController implements CrudController<Order> {
 	private OrderDAO orderDAO;
 	
 	private Utils util;
+	
+	private ItemController itemController;
 
 	@Override
 	public List<Order> readAll() {
@@ -48,20 +51,25 @@ public class OrderController implements CrudController<Order> {
 						orders.stream().filter(o -> o.getId() == orderId)
 						.findFirst();
 				
-				if (optOrder.isPresent()) {
-					LOGGER.info("Items for order with ID " + orderId);
-					optOrder.get().getItems().forEach((i, q) -> {
-						LOGGER.info(i + " x" + q);
-					});
-				} else {
-					LOGGER.info("No order found with ID " + orderId);
-				}
+				listItemsForOrder(optOrder);
 			} else {
 				listItems = false;
 			}
 		} while (listItems);
 		
 		return orders;
+	}
+	
+	private void listItemsForOrder(Optional<Order> optOrder) {
+		
+		if (optOrder.isPresent()) {
+			LOGGER.info("Items for order with ID " + optOrder.get().getId());
+			optOrder.get().getItems().forEach((i, q) -> {
+				LOGGER.info(i + " x" + q);
+			});
+		} else {
+			LOGGER.info("No items found for the given order ID");
+		}
 	}
 
 	@Override
@@ -97,9 +105,112 @@ public class OrderController implements CrudController<Order> {
 
 	@Override
 	public Order update() {
-		// TODO Auto-generated method stub
-		return null;
+		LOGGER.info("What is the ID of the order you'd like to modify?");
+		Order order = orderDAO.read(util.getLong());
+		if (order == null) {
+			LOGGER.info("There is no order with that ID");
+			return null;
+		}
+		LOGGER.info("Please choose one of the following:\n"
+				+ "- Add to order (type 'add')\n"
+				+ "- Remove from order (type 'remove')\n"
+				+ "- Return to menu (type 'return')");
+		String option = util.getString();
+		
+		switch (option.toLowerCase()) {
+		case "add":
+			order = addItemsToOrder(order);
+			break;
+		case "remove":
+			order = removeItemsFromOrder(order);
+			break;
+		default:
+			return null;
+		}
+		
+		order = orderDAO.update(order);
+		
+		LOGGER.info("Order successfully updated:");
+		LOGGER.info(order);
+		
+		return order;
 	}
+	
+	private Order addItemsToOrder(Order order) {
+		LOGGER.info("Here are the Items available to add to this order:");
+		itemController.readAll();
+		boolean addAnother = false;
+		do {
+			LOGGER.info("What is the ID of the item you would like to add?");
+			Long itemId = util.getLong();
+			Integer quantity = 0;
+			while (quantity < 1) {
+				LOGGER.info("How many of this item? Minimum 1.");
+				quantity = util.getInteger();
+			}
+			
+			Entry<Item, Integer> curItem = order.getItemEntryById(itemId);
+			
+			if (curItem != null) {
+				order.addItem(curItem.getKey(), quantity + curItem.getValue());
+			} else {
+				order.addItem(Item.builder().id(itemId).build(), quantity);
+			}
+			
+			LOGGER.info("Would you like to add another? "
+					+ "Type 'yes' to add, or anything else to continue.");
+			addAnother = util.getString().toLowerCase().equals("yes");
+		} while (addAnother);
+		
+		LOGGER.info("Adding to order...");
+		return order;
+	}
+	
+	private Order removeItemsFromOrder(Order order) {
+		LOGGER.info("Here are the Items in this order:");
+		listItemsForOrder(Optional.of(order));
+		boolean rmvAnother = false;
+		do {
+			
+			Optional<Entry<Item, Integer>> optEntry = Optional.empty();
+			
+			while (!optEntry.isPresent()) {
+				LOGGER.info("What is the ID of the item you would like to remove?");
+				Long itemId = util.getLong();
+				optEntry = order.getItems().entrySet()
+						.stream()
+						.filter(e -> e.getKey().getId() == itemId)
+						.findFirst();
+				
+				if (!optEntry.isPresent()) {
+					LOGGER.info("This order doesn't have any items by that ID");
+				}
+			}
+			
+			Integer quantity = 0;
+			Item item = optEntry.get().getKey();
+			Integer curQuan = optEntry.get().getValue();
+			
+			while (quantity < 1 || quantity > curQuan) {
+				LOGGER.info("How many of this item? Minimum 1, maximum " + curQuan);
+				quantity = util.getInteger();
+			}
+			
+			if (curQuan == quantity) {
+				order.removeItem(item);
+			} else {
+				order.addItem(item, curQuan - quantity);
+			}
+			
+			LOGGER.info("Would you like to remove another? "
+					+ "Type 'yes' to remove, or anything else to continue.");
+			rmvAnother = util.getString().toLowerCase().equals("yes");
+		} while (rmvAnother);
+		
+		LOGGER.info("Removing from order...");
+		return order;
+	}
+
 
 	@Override
 	public int delete() {

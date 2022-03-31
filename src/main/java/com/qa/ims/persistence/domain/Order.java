@@ -23,11 +23,11 @@ public class Order {
 	private Map<Item, Integer> items = new HashMap<>();
 	
 	public void addItem(Item item, Integer quantity) {
-		Integer currentQuant = 0;
-		
-		if (this.items.containsKey(item)) currentQuant = this.items.get(item);
-		
-		this.items.put(item, currentQuant + quantity);
+		this.items.put(item, quantity);
+	}
+	
+	public void removeItem(Item item) {
+		this.items.remove(item);
 	}
 	
 	public Double getOrderTotal() {
@@ -38,6 +38,16 @@ public class Order {
 		}
 		
 		return total;
+	}
+	
+	public Entry<Item, Integer> getItemEntryById(Long id) {
+		for (Entry<Item, Integer> entry : this.items.entrySet()) {
+			if (entry.getKey().getId() == id) {
+				return entry;
+			}
+		}
+		
+		return null;
 	}
 	
 	@Override
