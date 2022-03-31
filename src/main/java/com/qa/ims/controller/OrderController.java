@@ -103,8 +103,18 @@ public class OrderController implements CrudController<Order> {
 
 	@Override
 	public int delete() {
-		// TODO Auto-generated method stub
-		return 0;
+		LOGGER.info("You cannot undo this action, type 'yes' to continue, "
+				+ "or anything else to return.");
+		String confirm = util.getString();
+		if (!confirm.toLowerCase().equals("yes")) {
+			LOGGER.info("Cancelling request...");
+			return 0;
+		}
+		LOGGER.info("What is the ID of the order you would like removed?");
+		Long id = util.getLong();
+		int o = orderDAO.delete(id);
+		LOGGER.info("Order deleted successfully");
+		return o;
 	}
 
 }

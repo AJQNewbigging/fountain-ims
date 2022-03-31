@@ -65,7 +65,8 @@ public class ItemController implements CrudController<Item> {
 
 	@Override
 	public int delete() {
-		LOGGER.info("You cannot undo this action, type 'yes' to continue, or anything else to return.");
+		LOGGER.info("You cannot undo this action, type 'yes' to continue, "
+				+ "or anything else to return.");
 		String confirm = util.getString();
 		if (!confirm.toLowerCase().equals("yes")) {
 			LOGGER.info("Cancelling request...");
