@@ -3,6 +3,7 @@ package com.qa.ims.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,34 @@ public class OrderController implements CrudController<Order> {
 		orders.forEach(i -> {
 			LOGGER.info(i);
 		});
+		
+		boolean listItems = false;
+		
+		do {
+			LOGGER.info("Would you like to see the items of a specific order? "
+					+ "Type 'yes' to do so, or anything else to continue.");
+			if (util.getString().toLowerCase().equals("yes")) {
+				listItems = true;
+				LOGGER.info("What is the ID of the order whose items you'd "
+						+ "like to see?");
+				Long orderId = util.getLong();
+				
+				Optional<Order> optOrder = 
+						orders.stream().filter(o -> o.getId() == orderId)
+						.findFirst();
+				
+				if (optOrder.isPresent()) {
+					LOGGER.info("Items for order with ID " + orderId);
+					optOrder.get().getItems().forEach((i, q) -> {
+						LOGGER.info(i + " x" + q);
+					});
+				} else {
+					LOGGER.info("No order found with ID " + orderId);
+				}
+			} else {
+				listItems = false;
+			}
+		} while (listItems);
 		
 		return orders;
 	}

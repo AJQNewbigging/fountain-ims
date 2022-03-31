@@ -35,7 +35,7 @@ public class Item {
 	@Override
 	public String toString() {
 		return String.format(
-				"Item [\n\tID:\t%d\n\tName:\t%s\n\tPrice:\t£%.2f\n]\n",
+				"Item [\n\tID:\t%d\n\tName:\t%s\n\tPrice:\t£%.2f\n]",
 				this.id, this.name, this.price);
 	}
 	

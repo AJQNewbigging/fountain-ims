@@ -48,7 +48,7 @@ public class Order {
 				+ "Customer ID:\t%d\n\t"
 				+ "Customer Name:\t%s %s\n\t"
 				+ "Total Price:\t£%.2f\n\t"
-				+ "Number of items: %d\n]\n",
+				+ "Number of items: %d\n]",
 				this.id,
 				this.customer.getId(),
 				this.customer.getFirstName(),
