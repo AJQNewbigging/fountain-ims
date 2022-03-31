@@ -5,12 +5,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.utils.DBUtils;
@@ -21,8 +25,43 @@ public class OrderDAO implements Dao<Order> {
 
 	@Override
 	public List<Order> readAll() {
-		// TODO Auto-generated method stub
-		return null;
+		Map<Long, Order> orderMap = new HashMap<>();
+				
+		try {
+			Connection con = DBUtils.getInstance().getConnection();
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(
+					"SELECT o.id AS order_id, "
+					+ "c.id AS customer_id, c.first_name, c.surname, "
+					+ "i.id AS item_id, i.name, i.price, ot.quantity "
+					+ "FROM orders o "
+					+ "JOIN customers c ON o.customer_id = c.id "
+					+ "JOIN order_items ot ON o.id = ot.order_id "
+					+ "JOIN items i ON ot.item_id = i.id "
+					+ "ORDER BY order_id;");
+			
+			while (rs.next()) {
+				Long orderId = rs.getLong("order_id");
+				
+				if (!orderMap.containsKey(orderId)) {
+					orderMap.put(orderId, modelFromResultSet(rs));
+				}
+				
+				Item item = Item.builder()
+						.id(rs.getLong("item_id"))
+						.name(rs.getString("name"))
+						.price(rs.getDouble("price"))
+						.build();
+				
+				orderMap.get(orderId).addItem(item, rs.getInt("quantity"));
+			}
+			
+		} catch (SQLException e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		
+		return orderMap.values().stream().collect(Collectors.toList());
 	}
 
 	@Override
@@ -112,9 +151,18 @@ public class OrderDAO implements Dao<Order> {
 	}
 
 	@Override
-	public Order modelFromResultSet(ResultSet resultSet) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public Order modelFromResultSet(ResultSet rs) throws SQLException {
+		Customer customer = Customer.builder()
+				.id(rs.getLong("customer_id"))
+				.firstName(rs.getString("first_name"))
+				.surname(rs.getString("surname"))
+				.build();
+		Order order = Order.builder()
+				.id(rs.getLong("order_id"))
+				.customer(customer)
+				.build();
+		
+		return order;
 	}
 
 }

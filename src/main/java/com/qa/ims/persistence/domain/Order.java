@@ -47,12 +47,14 @@ public class Order {
 				+ "ID:\t%d\n\t"
 				+ "Customer ID:\t%d\n\t"
 				+ "Customer Name:\t%s %s\n\t"
-				+ "Total Price:\t£%.2f\n]\n",
+				+ "Total Price:\t£%.2f\n\t"
+				+ "Number of items: %d\n]\n",
 				this.id,
 				this.customer.getId(),
 				this.customer.getFirstName(),
 				this.customer.getSurname(),
-				this.getOrderTotal());
+				this.getOrderTotal(),
+				items.values().stream().mapToInt(Integer::intValue).sum());
 	}
 
 }

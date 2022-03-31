@@ -32,20 +32,3 @@ CREATE TABLE IF NOT EXISTS `ims`.`order_items` (
     FOREIGN KEY (`item_id`) REFERENCES `ims`.`items`(`id`)
 );
 
-SELECT `o`.`id` AS `order_id`,
-`c`.`id` AS `customer_id`, `c`.`first_name`, `c`.`surname`,
-`i`.`id` AS `item_id`, `i`.`name`, `i`.`price`,
-`ot`.`quantity`
-FROM `orders` `o` 
-JOIN `customers` `c` ON `o`.`customer_id` = `c`.`id` 
-JOIN `order_items` `ot` ON `o`.`id` = `ot`.`order_id` 
-JOIN `items` `i` ON `ot`.`item_id` = `i`.`id`
-ORDER BY `customer_id`;
-
-REPLACE INTO `order_items` (`order_id`, `item_id`, `quantity`) VALUES 
-	(1, 2, 7),
-    (1, 3, 4),
-    (1, 1, 2),
-    (2, 1, 2);
-
-

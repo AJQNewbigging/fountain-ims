@@ -14,3 +14,9 @@ INSERT INTO `ims`.`order_items` (`order_id`, `item_id`, `quantity`) VALUES
 	(1, 2, 5),
     (1, 3, 3),
     (2, 3, 2);
+
+REPLACE INTO `order_items` (`order_id`, `item_id`, `quantity`) VALUES 
+	(1, 2, 7),
+    (1, 3, 4),
+    (1, 1, 2),
+    (2, 1, 2);

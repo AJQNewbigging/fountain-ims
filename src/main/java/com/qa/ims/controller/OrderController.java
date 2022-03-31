@@ -26,8 +26,13 @@ public class OrderController implements CrudController<Order> {
 
 	@Override
 	public List<Order> readAll() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Order> orders = orderDAO.readAll();
+		
+		orders.forEach(i -> {
+			LOGGER.info(i);
+		});
+		
+		return orders;
 	}
 
 	@Override
