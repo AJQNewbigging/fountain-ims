@@ -137,7 +137,7 @@ public class ItemDAO implements Dao<Item> {
 			LOGGER.error(e.getMessage());
 		}
 		
-		return 0;
+		return -1;
 	}
 
 	@Override
