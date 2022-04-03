@@ -55,9 +55,11 @@ public class DBUtils {
 				BufferedReader br = new BufferedReader(new FileReader(file));) {
 			String fileAsString = br.lines().reduce((acc, next) -> acc + next).orElse("");
 			String[] queries = fileAsString.split(";");
+			
 			modified += Stream.of(queries).map(string -> {
 				try (Statement statement = connection.createStatement();) {
-					return statement.executeUpdate(string);
+					int ret = statement.executeUpdate(string);
+					return ret;
 				} catch (Exception e) {
 					LOGGER.debug(e);
 					return 0;

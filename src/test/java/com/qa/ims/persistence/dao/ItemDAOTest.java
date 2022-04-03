@@ -10,12 +10,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.qa.ims.persistence.domain.Customer;
+import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.utils.DBUtils;
 
-public class CustomerDAOTest {
+public class ItemDAOTest {
 
-	private final CustomerDAO DAO = new CustomerDAO();
+	private final ItemDAO dao = new ItemDAO();
 
 	@Before
 	public void setup() {
@@ -33,11 +33,11 @@ public class CustomerDAOTest {
 	 */
 	@Test
 	public void testCreate() {
-		String firstName = "chris";
-		String lastName = "perrins";
-		final Customer create = new Customer(firstName, lastName);
-		final Customer created = new Customer(4L, firstName, lastName);
-		assertEquals(created, DAO.create(create));
+		String name = "Pipecleaner";
+		Double price = 3.70;
+		final Item create = Item.builder().name(name).price(price).build();
+		final Item expected = Item.builder().id(4L).name(name).price(price).build();
+		assertEquals(expected, dao.create(create));
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class CustomerDAOTest {
 	 */
 	@Test
 	public void testCreateWithNull() {
-		assertNull(DAO.create(null));
+		assertNull(dao.create(null));
 	}
 
 	/**
@@ -53,11 +53,11 @@ public class CustomerDAOTest {
 	 */
 	@Test
 	public void testReadAll() {
-		List<Customer> expected = new ArrayList<>();
-		expected.add(new Customer(1L, "Jordan", "Harrison"));
-		expected.add(new Customer(2L, "Asher", "Newbigging"));
-		expected.add(new Customer(3L, "Jane", "Smith"));
-		assertEquals(expected, DAO.readAll());
+		List<Item> expected = new ArrayList<>();
+		expected.add(new Item(1L, "Bodyboard", 19.99));
+		expected.add(new Item(2L, "Surfboard", 24.99));
+		expected.add(new Item(3L, "Skateboard", 16.99));
+		assertEquals(expected, dao.readAll());
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class CustomerDAOTest {
 	@Test
 	public void testReadAllWhenEmpty() {
 		windDown();
-		assertEquals(new ArrayList<>(), DAO.readAll());
+		assertEquals(new ArrayList<>(), dao.readAll());
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class CustomerDAOTest {
 	 */
 	@Test
 	public void testReadLatest() {
-		assertEquals(new Customer(3L, "Jane", "Smith"), DAO.readLatest());
+		assertEquals(new Item(3L, "Skateboard", 16.99), dao.readLatest());
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public class CustomerDAOTest {
 	@Test
 	public void testReadLatestWhenEmpty() {
 		windDown();
-		assertNull(DAO.readLatest());
+		assertNull(dao.readLatest());
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class CustomerDAOTest {
 	@Test
 	public void testRead() {
 		final long ID = 1L;
-		assertEquals(new Customer(ID, "Jordan", "Harrison"), DAO.read(ID));
+		assertEquals(new Item(ID, "Bodyboard", 19.99), dao.read(ID));
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public class CustomerDAOTest {
 	@Test
 	public void testReadWhenEmpty() {
 		windDown();
-		assertNull(DAO.read(1L));
+		assertNull(dao.read(1L));
 	}
 
 	/**
@@ -109,8 +109,9 @@ public class CustomerDAOTest {
 	 */
 	@Test
 	public void testUpdate() {
-		final Customer updated = new Customer(1L, "chris", "perrins");
-		assertEquals(updated, DAO.update(updated));
+		final Item updated = 
+				Item.builder().id(1L).name("Dishwasher").price(0.99).build();
+		assertEquals(updated, dao.update(updated));
 	}
 	
 	/**
@@ -118,22 +119,23 @@ public class CustomerDAOTest {
 	 */
 	@Test
 	public void testUpdateWithNull() {
-		assertNull(DAO.update(null));
+		assertNull(dao.update(null));
 	}
 
 	/**
-	 * Test deletion when a customer has no orders, expects success.
+	 * Test deletion when an item is in no orders, expects success.
 	 */
 	@Test
 	public void testDelete() {
-		assertEquals(1, DAO.delete(1));
+		assertEquals(1, dao.delete(1));
 	}
 	
 	/**
-	 * Test deletion when a customer has an order, expects failure.
+	 * Test deletion when a item is in an order, expects failure.
 	 */
 	@Test
-	public void testDeleteWhenHasOrder() {
-		assertEquals(0, DAO.delete(2));
+	public void testDeleteWhenInOrder() {
+		assertEquals(0, dao.delete(2));
 	}
+	
 }
