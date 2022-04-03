@@ -121,12 +121,13 @@ public class OrderDAO implements Dao<Order> {
 			if (!order.getItems().isEmpty()) {
 				order = update(order);
 			}
+			return order;
 		} catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
 		}
 		
-		return order;
+		return null;
 	}
 	
 	public Long readLatestID() {
@@ -166,12 +167,14 @@ public class OrderDAO implements Dao<Order> {
 			}
 			
 			stmt.executeBatch();
+			
+			return order;
 		} catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
 		}
 		
-		return order;
+		return null;
 	}
 
 	@Override
@@ -187,7 +190,8 @@ public class OrderDAO implements Dao<Order> {
 					"DELETE FROM orders WHERE id = ?");
 			oDelete.setLong(1, id);
 			
-			return otDelete.executeUpdate() + oDelete.executeUpdate();
+			return otDelete.executeUpdate() > 0 && oDelete.executeUpdate() > 0 
+					? 1 : 0;
 		} catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());

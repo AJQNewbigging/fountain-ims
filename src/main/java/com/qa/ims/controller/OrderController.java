@@ -97,8 +97,13 @@ public class OrderController implements CrudController<Order> {
 		} while (addItem);
 		
 		order.setItems(items);
-		orderDAO.create(order);
-		LOGGER.info("This order has been successfully created!");
+		order = orderDAO.create(order);
+		
+		if (order == null) {
+			LOGGER.info("This order failed to create.");
+		} else {
+			LOGGER.info("This order has been successfully created!");
+		}
 		
 		return order;
 	}
@@ -130,8 +135,12 @@ public class OrderController implements CrudController<Order> {
 		
 		order = orderDAO.update(order);
 		
-		LOGGER.info("Order successfully updated:");
-		LOGGER.info(order);
+		if (order == null) {
+			LOGGER.info("Order failed to update.");
+		} else {
+			LOGGER.info("Order successfully updated:");
+			LOGGER.info(order);
+		}
 		
 		return order;
 	}
@@ -224,7 +233,11 @@ public class OrderController implements CrudController<Order> {
 		LOGGER.info("What is the ID of the order you would like removed?");
 		Long id = util.getLong();
 		int o = orderDAO.delete(id);
-		LOGGER.info("Order deleted successfully");
+		if (o < 1) {
+			LOGGER.info("Order deletion failed");
+		} else {
+			LOGGER.info("Order deleted successfully");
+		}
 		return o;
 	}
 

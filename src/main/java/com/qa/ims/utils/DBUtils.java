@@ -57,13 +57,10 @@ public class DBUtils {
 			String[] queries = fileAsString.split(";");
 			
 			modified += Stream.of(queries).map(string -> {
-				System.out.println(string);
 				try (Statement statement = connection.createStatement();) {
 					int ret = statement.executeUpdate(string);
-					System.out.println("Success: " + ret);
 					return ret;
 				} catch (Exception e) {
-					System.out.println("Fail: " + e.getMessage());
 					LOGGER.debug(e);
 					return 0;
 				}

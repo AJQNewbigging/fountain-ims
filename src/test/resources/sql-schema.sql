@@ -1,3 +1,5 @@
+set mode MySQL;
+
 CREATE TABLE IF NOT EXISTS `customers` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `first_name` VARCHAR(40) DEFAULT NULL,
