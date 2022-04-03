@@ -55,10 +55,15 @@ public class DBUtils {
 				BufferedReader br = new BufferedReader(new FileReader(file));) {
 			String fileAsString = br.lines().reduce((acc, next) -> acc + next).orElse("");
 			String[] queries = fileAsString.split(";");
+			
 			modified += Stream.of(queries).map(string -> {
+				System.out.println(string);
 				try (Statement statement = connection.createStatement();) {
-					return statement.executeUpdate(string);
+					int ret = statement.executeUpdate(string);
+					System.out.println("Success: " + ret);
+					return ret;
 				} catch (Exception e) {
+					System.out.println("Fail: " + e.getMessage());
 					LOGGER.debug(e);
 					return 0;
 				}

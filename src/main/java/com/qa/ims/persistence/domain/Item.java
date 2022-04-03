@@ -38,20 +38,5 @@ public class Item {
 				"Item [\n\tID:\t%d\n\tName:\t%s\n\tPrice:\t£%.2f\n]",
 				this.id, this.name, this.price);
 	}
-	
-	/**
-	 *
-	 * Compares incoming obj class with current class in order to establish
-	 * equality.
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Item)) {
-			return false;
-		} else {
-			Item i2 = (Item) obj;
-			return i2.toString().equals(this.toString());
-		}
-	}
 
 }

@@ -27,4 +27,3 @@ CREATE TABLE IF NOT EXISTS `order_items` (
     FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`),
     FOREIGN KEY (`item_id`) REFERENCES `items`(`id`)
 );
-
