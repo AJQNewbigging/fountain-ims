@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Item.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ims</a> &gt; <a href="index.source.html" class="el_package">com.qa.ims.persistence.domain</a> &gt; <span class="el_source">Item.java</span></div><h1>Item.java</h1><pre class="source lang-java linenums">package com.qa.ims.persistence.domain;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+// Establishes default getters and setters for private properties
+<span class="pc bpc" id="L9" title="1 of 30 branches missed.">@Data</span>
+// Establishes builder functionality for lombok (eg: .builder().id(x).build();)
+<span class="pc" id="L11">@Builder				</span>
+// Establishes all arg constructor
+<span class="fc" id="L13">@AllArgsConstructor</span>
+// Establishes no arg constructor
+<span class="fc" id="L15">@NoArgsConstructor</span>
+public class Item {
+	
+<span class="fc" id="L18">	private Long id;</span>
+	
+<span class="fc" id="L20">	private String name;</span>
+	
+<span class="fc" id="L22">	private Double price;</span>
+	
+	/**
+	 * 
+	 * Should return string like:
+	 * 
+	 *	Item [
+	 *		ID:		1
+	 *		Name:	Bodyboard
+	 *		Price:	£19.99
+	 *	]
+	 * 
+	 */
+	@Override
+	public String toString() {
+<span class="fc" id="L37">		return String.format(</span>
+				&quot;Item [\n\tID:\t%d\n\tName:\t%s\n\tPrice:\t£%.2f\n]&quot;,
+				this.id, this.name, this.price);
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,68 +1,57 @@
-Coverage: 34%
-# Project Title
+Coverage: 88%
+Jira: [FIMS board](https://anewbigging.atlassian.net/jira/software/projects/FIMS/boards/2)
+# Fountain Inventory Management System
 
-One Paragraph of project description goes here
+A basic text-based inventory management session, dubbed 'Fountain IMS' due to the creator's membership of Team Water of the 22FebEnable3 cohort. As this application currently stands (v.1.0), logic exists for customer, item, and order management. This is a Java application using a MySQL database.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Database schemas are kept in src/main/resources/sql-shemas.sql, these will need to be run before the application can be executed. Example test data is also available in src/main/resources/sql-data.sql, if you would like to use it.
+
+Changes may need to be made to db.properties in the same directory. These properties should match the proper information for a user with access to the IMS database.
+
+Once the IMS database has been correctly initialised, the application can be run. A compiled version of the application exists within target/. This can be run in your terminal with:
+
+```bash
+java -jar target/ims-0.0.1-jar-with-dependencies.jar
+```
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+If you do not have an installation of MySQL, a comprehensive installation guide for your device can be found [here](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/).
 
-```
-Give examples
-```
+* MySQL version 14.14; any version between this and the latest will work equally well.
+
+* Java JDK version 16.0.1. You can find a comprehensive installation guide for this [here](https://www.java.com/en/download/help/download_options.html)
+
+* Project Lombok (latest); this is used to generate bioler-plate code through class annotations. An installation guide is available [here](https://projectlombok.org/setup/eclipse).
+
+* Maven (latest); Maven is our build management tool, used to manage dependencies and build our application. Find an installation guide [here](https://maven.apache.org/install.html).
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+1. Import SQL schema:
 
-Say what the step will be
-
+```bash
+mysql -u user -p < src/main/resources/sql-schema.sql
 ```
-Give the example
-```
+2. Import SQL data (optional)
 
-And repeat
-
-```
-until finished
+```bash
+mysql -u user -p < src/main/resources/sql-data.sql
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+3. Build the application in your IDE with maven (optional). Note: a pre-built jar may already exist in the target/ directory, check this if you don't want to overwrite it.
 
-## Running the tests
-
-Explain how to run the automated tests for this system. Break down into which tests and what they do
-
-### Unit Tests 
-
-Explain what these tests test, why and how to run them
-
-```
-Give an example
+```bash
+mvn clean install
 ```
 
-### Integration Tests 
-Explain what these tests test, why and how to run them
+4. Run the application in your terminal
 
+```bash
+java -jar target/ims-0.0.1-jar-with-dependencies.jar
 ```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
@@ -75,6 +64,7 @@ We use [SemVer](http://semver.org/) for versioning.
 ## Authors
 
 * **Chris Perrins** - *Initial work* - [christophperrins](https://github.com/christophperrins)
+* **Ash Newbigging** - *Continued work* - [AJQNewbigging](https://github.com/AJQNewbigging)
 
 ## License
 
@@ -84,6 +74,5 @@ This project is licensed under the MIT license - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* Website [tabnine](https://www.tabnine.com) provided insight into [batches in Prepared Statements](https://www.tabnine.com/code/java/methods/java.sql.PreparedStatement/addBatch).
+* [Project Lombok](https://projectlombok.org)

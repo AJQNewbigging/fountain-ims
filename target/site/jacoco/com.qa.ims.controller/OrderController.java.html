@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ims</a> &gt; <a href="index.source.html" class="el_package">com.qa.ims.controller</a> &gt; <span class="el_source">OrderController.java</span></div><h1>OrderController.java</h1><pre class="source lang-java linenums">package com.qa.ims.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.qa.ims.persistence.dao.OrderDAO;
+import com.qa.ims.persistence.domain.Customer;
+import com.qa.ims.persistence.domain.Item;
+import com.qa.ims.persistence.domain.Order;
+import com.qa.ims.utils.Utils;
+
+import lombok.AllArgsConstructor;
+
+<span class="fc" id="L20">@AllArgsConstructor</span>
+public class OrderController implements CrudController&lt;Order&gt; {
+	
+<span class="fc" id="L23">	public static final Logger LOGGER = LogManager.getLogger();</span>
+	
+	private OrderDAO orderDAO;
+	
+	private Utils util;
+	
+	private ItemController itemController;
+
+	@Override
+	public List&lt;Order&gt; readAll() {
+<span class="fc" id="L33">		List&lt;Order&gt; orders = orderDAO.readAll();</span>
+		
+<span class="fc" id="L35">		orders.forEach(i -&gt; {</span>
+<span class="fc" id="L36">			LOGGER.info(i);</span>
+<span class="fc" id="L37">		});</span>
+		
+<span class="fc" id="L39">		boolean listItems = false;</span>
+		
+		do {
+<span class="fc" id="L42">			LOGGER.info(&quot;Would you like to see the items of a specific order? &quot;</span>
+					+ &quot;Type 'yes' to do so, or anything else to continue.&quot;);
+<span class="fc bfc" id="L44" title="All 2 branches covered.">			if (util.getString().toLowerCase().equals(&quot;yes&quot;)) {</span>
+<span class="fc" id="L45">				listItems = true;</span>
+<span class="fc" id="L46">				LOGGER.info(&quot;What is the ID of the order whose items you'd &quot;</span>
+						+ &quot;like to see?&quot;);
+<span class="fc" id="L48">				Long orderId = util.getLong();</span>
+				
+<span class="fc" id="L50">				Optional&lt;Order&gt; optOrder = </span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">						orders.stream().filter(o -&gt; o.getId() == orderId)</span>
+<span class="fc" id="L52">						.findFirst();</span>
+				
+<span class="fc" id="L54">				listItemsForOrder(optOrder);</span>
+<span class="fc" id="L55">			} else {</span>
+<span class="fc" id="L56">				listItems = false;</span>
+			}
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		} while (listItems);</span>
+		
+<span class="fc" id="L60">		return orders;</span>
+	}
+	
+	private void listItemsForOrder(Optional&lt;Order&gt; optOrder) {
+		
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">		if (optOrder.isPresent()) {</span>
+<span class="fc" id="L66">			LOGGER.info(&quot;Items for order with ID &quot; + optOrder.get().getId());</span>
+<span class="fc" id="L67">			optOrder.get().getItems().forEach((i, q) -&gt; {</span>
+<span class="fc" id="L68">				LOGGER.info(i + &quot; x&quot; + q);</span>
+<span class="fc" id="L69">			});</span>
+		} else {
+<span class="nc" id="L71">			LOGGER.info(&quot;No items found for the given order ID&quot;);</span>
+		}
+<span class="fc" id="L73">	}</span>
+
+	@Override
+	public Order create() {
+<span class="fc" id="L77">		Order order = new Order();</span>
+<span class="fc" id="L78">		LOGGER.info(&quot;What is ID for the customer owning this order?&quot;);</span>
+<span class="fc" id="L79">		order.setCustomer(Customer.builder().id(util.getLong()).build());</span>
+<span class="fc" id="L80">		Map&lt;Item, Integer&gt; items = new HashMap&lt;&gt;();</span>
+		
+<span class="fc" id="L82">		boolean addItem = false;</span>
+		
+		do {
+<span class="fc" id="L85">			LOGGER.info(&quot;Do you wish to add an item to the order?\n&quot;</span>
+					+ &quot;Type yes to add an item, or anything else to continue.&quot;);
+<span class="fc bfc" id="L87" title="All 2 branches covered.">			if (!util.getString().toLowerCase().equals(&quot;yes&quot;)) {</span>
+<span class="fc" id="L88">				addItem = false;</span>
+			} else {
+<span class="fc" id="L90">				LOGGER.info(&quot;What is ID of the item you would like to add?&quot;);</span>
+<span class="fc" id="L91">				Item item = Item.builder().id(util.getLong()).build();</span>
+<span class="fc" id="L92">				LOGGER.info(&quot;How many would you like to add?&quot;);</span>
+<span class="fc" id="L93">				items.put(item, util.getInteger());</span>
+<span class="fc" id="L94">				addItem = true;</span>
+			}
+			
+<span class="fc bfc" id="L97" title="All 2 branches covered.">		} while (addItem);</span>
+		
+<span class="fc" id="L99">		order.setItems(items);</span>
+<span class="fc" id="L100">		order = orderDAO.create(order);</span>
+		
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">		if (order == null) {</span>
+<span class="nc" id="L103">			LOGGER.info(&quot;This order failed to create.&quot;);</span>
+		} else {
+<span class="fc" id="L105">			LOGGER.info(&quot;This order has been successfully created!&quot;);</span>
+		}
+		
+<span class="fc" id="L108">		return order;</span>
+	}
+
+	@Override
+	public Order update() {
+<span class="fc" id="L113">		LOGGER.info(&quot;What is the ID of the order you'd like to modify?&quot;);</span>
+<span class="fc" id="L114">		Order order = orderDAO.read(util.getLong());</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		if (order == null) {</span>
+<span class="fc" id="L116">			LOGGER.info(&quot;There is no order with that ID&quot;);</span>
+<span class="fc" id="L117">			return null;</span>
+		}
+<span class="fc" id="L119">		LOGGER.info(&quot;Please choose one of the following:\n&quot;</span>
+				+ &quot;- Add to order (type 'add')\n&quot;
+				+ &quot;- Remove from order (type 'remove')\n&quot;
+				+ &quot;- Return to menu (type 'return')&quot;);
+<span class="fc" id="L123">		String option = util.getString();</span>
+		
+<span class="fc bfc" id="L125" title="All 3 branches covered.">		switch (option.toLowerCase()) {</span>
+		case &quot;add&quot;:
+<span class="fc" id="L127">			order = addItemsToOrder(order);</span>
+<span class="fc" id="L128">			break;</span>
+		case &quot;remove&quot;:
+<span class="fc" id="L130">			order = removeItemsFromOrder(order);</span>
+<span class="fc" id="L131">			break;</span>
+		default:
+<span class="fc" id="L133">			return null;</span>
+		}
+		
+<span class="fc" id="L136">		order = orderDAO.update(order);</span>
+		
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">		if (order == null) {</span>
+<span class="nc" id="L139">			LOGGER.info(&quot;Order failed to update.&quot;);</span>
+		} else {
+<span class="fc" id="L141">			LOGGER.info(&quot;Order successfully updated:&quot;);</span>
+<span class="fc" id="L142">			LOGGER.info(order);</span>
+		}
+		
+<span class="fc" id="L145">		return order;</span>
+	}
+	
+	private Order addItemsToOrder(Order order) {
+<span class="fc" id="L149">		LOGGER.info(&quot;Here are the Items available to add to this order:&quot;);</span>
+<span class="fc" id="L150">		itemController.readAll();</span>
+<span class="fc" id="L151">		boolean addAnother = false;</span>
+		do {
+<span class="fc" id="L153">			LOGGER.info(&quot;What is the ID of the item you would like to add?&quot;);</span>
+<span class="fc" id="L154">			Long itemId = util.getLong();</span>
+<span class="fc" id="L155">			Integer quantity = 0;</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">			while (quantity &lt; 1) {</span>
+<span class="fc" id="L157">				LOGGER.info(&quot;How many of this item? Minimum 1.&quot;);</span>
+<span class="fc" id="L158">				quantity = util.getInteger();</span>
+			}
+			
+<span class="fc" id="L161">			Entry&lt;Item, Integer&gt; curItem = order.getItemEntryById(itemId);</span>
+			
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">			if (curItem != null) {</span>
+<span class="fc" id="L164">				order.addItem(curItem.getKey(), quantity + curItem.getValue());</span>
+			} else {
+<span class="nc" id="L166">				order.addItem(Item.builder().id(itemId).build(), quantity);</span>
+			}
+			
+<span class="fc" id="L169">			LOGGER.info(&quot;Would you like to add another? &quot;</span>
+					+ &quot;Type 'yes' to add, or anything else to continue.&quot;);
+<span class="fc" id="L171">			addAnother = util.getString().toLowerCase().equals(&quot;yes&quot;);</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">		} while (addAnother);</span>
+		
+<span class="fc" id="L174">		LOGGER.info(&quot;Adding to order...&quot;);</span>
+<span class="fc" id="L175">		return order;</span>
+	}
+	
+	private Order removeItemsFromOrder(Order order) {
+<span class="fc" id="L179">		LOGGER.info(&quot;Here are the Items in this order:&quot;);</span>
+<span class="fc" id="L180">		listItemsForOrder(Optional.of(order));</span>
+<span class="fc" id="L181">		boolean rmvAnother = false;</span>
+		do {
+			
+<span class="fc" id="L184">			Optional&lt;Entry&lt;Item, Integer&gt;&gt; optEntry = Optional.empty();</span>
+			
+<span class="fc bfc" id="L186" title="All 2 branches covered.">			while (!optEntry.isPresent()) {</span>
+<span class="fc" id="L187">				LOGGER.info(&quot;What is the ID of the item you would like to remove?&quot;);</span>
+<span class="fc" id="L188">				Long itemId = util.getLong();</span>
+<span class="fc" id="L189">				optEntry = order.getItems().entrySet()</span>
+<span class="fc" id="L190">						.stream()</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">						.filter(e -&gt; e.getKey().getId() == itemId)</span>
+<span class="fc" id="L192">						.findFirst();</span>
+				
+<span class="fc bfc" id="L194" title="All 2 branches covered.">				if (!optEntry.isPresent()) {</span>
+<span class="fc" id="L195">					LOGGER.info(&quot;This order doesn't have any items by that ID&quot;);</span>
+				}
+<span class="fc" id="L197">			}</span>
+			
+<span class="fc" id="L199">			Integer quantity = 0;</span>
+<span class="fc" id="L200">			Item item = optEntry.get().getKey();</span>
+<span class="fc" id="L201">			Integer curQuan = optEntry.get().getValue();</span>
+			
+<span class="fc bfc" id="L203" title="All 4 branches covered.">			while (quantity &lt; 1 || quantity &gt; curQuan) {</span>
+<span class="fc" id="L204">				LOGGER.info(&quot;How many of this item? Minimum 1, maximum &quot; + curQuan);</span>
+<span class="fc" id="L205">				quantity = util.getInteger();</span>
+			}
+			
+<span class="fc bfc" id="L208" title="All 2 branches covered.">			if (curQuan == quantity) {</span>
+<span class="fc" id="L209">				order.removeItem(item);</span>
+			} else {
+<span class="fc" id="L211">				order.addItem(item, curQuan - quantity);</span>
+			}
+			
+<span class="fc" id="L214">			LOGGER.info(&quot;Would you like to remove another? &quot;</span>
+					+ &quot;Type 'yes' to remove, or anything else to continue.&quot;);
+<span class="fc" id="L216">			rmvAnother = util.getString().toLowerCase().equals(&quot;yes&quot;);</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">		} while (rmvAnother);</span>
+		
+<span class="fc" id="L219">		LOGGER.info(&quot;Removing from order...&quot;);</span>
+<span class="fc" id="L220">		return order;</span>
+	}
+
+
+	@Override
+	public int delete() {
+<span class="fc" id="L226">		LOGGER.info(&quot;You cannot undo this action, type 'yes' to continue, &quot;</span>
+				+ &quot;or anything else to return.&quot;);
+<span class="fc" id="L228">		String confirm = util.getString();</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">		if (!confirm.toLowerCase().equals(&quot;yes&quot;)) {</span>
+<span class="fc" id="L230">			LOGGER.info(&quot;Cancelling request...&quot;);</span>
+<span class="fc" id="L231">			return 0;</span>
+		}
+<span class="fc" id="L233">		LOGGER.info(&quot;What is the ID of the order you would like removed?&quot;);</span>
+<span class="fc" id="L234">		Long id = util.getLong();</span>
+<span class="fc" id="L235">		int o = orderDAO.delete(id);</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">		if (o &lt; 1) {</span>
+<span class="fc" id="L237">			LOGGER.info(&quot;Order deletion failed&quot;);</span>
+		} else {
+<span class="fc" id="L239">			LOGGER.info(&quot;Order deleted successfully&quot;);</span>
+		}
+<span class="fc" id="L241">		return o;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

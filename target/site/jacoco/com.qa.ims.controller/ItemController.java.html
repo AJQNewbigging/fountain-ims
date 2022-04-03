@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ItemController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ims</a> &gt; <a href="index.source.html" class="el_package">com.qa.ims.controller</a> &gt; <span class="el_source">ItemController.java</span></div><h1>ItemController.java</h1><pre class="source lang-java linenums">package com.qa.ims.controller;
+
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.qa.ims.persistence.dao.Dao;
+import com.qa.ims.persistence.domain.Item;
+import com.qa.ims.utils.Utils;
+
+import lombok.AllArgsConstructor;
+
+<span class="fc" id="L14">@AllArgsConstructor</span>
+public class ItemController implements CrudController&lt;Item&gt; {
+	
+<span class="fc" id="L17">	public static final Logger LOGGER = LogManager.getLogger();</span>
+	
+	private Dao&lt;Item&gt; itemDAO;
+	
+	private Utils util;
+
+	@Override
+	public List&lt;Item&gt; readAll() {
+<span class="fc" id="L25">		List&lt;Item&gt; items = itemDAO.readAll();</span>
+		
+<span class="fc" id="L27">		items.forEach(i -&gt; {</span>
+<span class="fc" id="L28">			LOGGER.info(i);</span>
+<span class="fc" id="L29">		});</span>
+		
+<span class="fc" id="L31">		return items;</span>
+	}
+
+	@Override
+	public Item create() {
+<span class="fc" id="L36">		Item item = itemDAO.create(createForm(new Item()));</span>
+		
+<span class="fc" id="L38">		LOGGER.info(String.format(</span>
+<span class="fc" id="L39">				&quot;New item '%s' created successfully!&quot;, item.getName()));</span>
+<span class="fc" id="L40">		return item;</span>
+	}
+
+	@Override
+	public Item update() {
+<span class="fc" id="L45">		LOGGER.info(&quot;What is the ID of the item you wish to modify?&quot;);</span>
+<span class="fc" id="L46">		Item item = createForm(Item.builder().id(util.getLong()).build());</span>
+		
+<span class="fc" id="L48">		item = itemDAO.update(item);</span>
+<span class="fc" id="L49">		LOGGER.info(String.format(&quot;The update has been appled to item of id %d&quot;,</span>
+<span class="fc" id="L50">				item.getId()));</span>
+		
+<span class="fc" id="L52">		return item;</span>
+	}
+	
+	private Item createForm(Item item) {
+		
+<span class="fc" id="L57">		LOGGER.info(&quot;Please enter a name for the item:&quot;);</span>
+<span class="fc" id="L58">		item.setName(util.getString());</span>
+		
+<span class="fc" id="L60">		LOGGER.info(&quot;And the price? (£)&quot;);</span>
+<span class="fc" id="L61">		item.setPrice(util.getDouble());</span>
+		
+<span class="fc" id="L63">		return item;</span>
+	}
+
+	@Override
+	public int delete() {
+<span class="fc" id="L68">		LOGGER.info(&quot;You cannot undo this action, type 'yes' to continue, &quot;</span>
+				+ &quot;or anything else to return.&quot;);
+<span class="fc" id="L70">		String confirm = util.getString();</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">		if (!confirm.toLowerCase().equals(&quot;yes&quot;)) {</span>
+<span class="fc" id="L72">			LOGGER.info(&quot;Cancelling request...&quot;);</span>
+<span class="fc" id="L73">			return 0;</span>
+		}
+<span class="fc" id="L75">		LOGGER.info(&quot;What is the ID of the item you would like removed?&quot;);</span>
+<span class="fc" id="L76">		Long id = util.getLong();</span>
+<span class="fc" id="L77">		int i = itemDAO.delete(id);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		if (i == 0) {</span>
+<span class="fc" id="L79">			LOGGER.info(&quot;Item deletion failed&quot;);</span>
+		} else {
+<span class="fc" id="L81">			LOGGER.info(&quot;Item deleted successfully&quot;);</span>
+		}
+<span class="fc" id="L83">		return i;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
