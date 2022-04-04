@@ -19,6 +19,7 @@ public class Order {
 	
 	private Customer customer;
 	
+	// Item object used as map key, with its quantity as its value
 	@Builder.Default
 	private Map<Item, Integer> items = new HashMap<>();
 	
